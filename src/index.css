@@ -3,9 +3,10 @@ body {
 }
 
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: Poppins, sans-serif;
 
     color-scheme: light dark;
+    color: #213547;
     background-color: #fefefe;
 
     font-synthesis: none;
@@ -14,14 +15,16 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* @media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: dark) {
     :root {
-        color: #213547;
-        background-color: #ffffff;
+        color: #fefefe;
+        background-color: #213547;
     }
+
     a:hover {
         color: #747bff;
     }
+
     button {
         background-color: #f9f9f9;
     }

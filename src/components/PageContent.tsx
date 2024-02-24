@@ -7,9 +7,6 @@ export const PageContent = styled('div')({
     maxWidth: 1192,
     padding: '0 48px',
     margin: 'auto',
-    width: '100vw',
-    height: '100vh',
+    height: '100dvh',
     fontSize: '1rem',
-
-    backgroundColor: '#AAA',
 });

@@ -1,22 +1,26 @@
 import styled from '@emotion/styled';
 import { Hexagon } from './Hexagon';
+import { SpinnerProps } from './Spinner.types';
 
-const Container = styled('div')({
+const Container = styled('div', {
+    shouldForwardProp: (prop) => prop !== 'size',
+})<SpinnerProps>(({ size }) => ({
     position: 'relative',
     width: '1em',
+    minWidth: '1em',
     height: '1em',
+    fontSize: size,
+}));
 
-    backgroundColor: '#DDD',
-});
-
-export function Spinner() {
+export function Spinner(props: SpinnerProps) {
+    const { size = 64, speed = 1000 } = props;
     return (
-        <Container>
-            <Hexagon reverse>
-                <Hexagon>
-                    <Hexagon reverse>
-                        <Hexagon>
-                            <Hexagon />
+        <Container size={size}>
+            <Hexagon speed={speed} reverse>
+                <Hexagon speed={speed}>
+                    <Hexagon speed={speed} reverse>
+                        <Hexagon speed={speed}>
+                            <Hexagon speed={speed} reverse />
                         </Hexagon>
                     </Hexagon>
                 </Hexagon>

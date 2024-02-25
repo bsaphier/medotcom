@@ -1,7 +1,12 @@
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 
-import { HexagonProps } from './Spinner.types';
+interface HexagonProps {
+    speed?: number;
+    reverse?: boolean;
+    children?: ReactNode;
+}
 
 const HexagonContainer = styled('div')({
     position: 'absolute',

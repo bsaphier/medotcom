@@ -1,6 +1,10 @@
 import styled from '@emotion/styled';
 import { Hexagon } from './Hexagon';
-import { SpinnerProps } from './Spinner.types';
+
+interface SpinnerProps {
+    size?: number;
+    speed?: number;
+}
 
 const Container = styled('div', {
     shouldForwardProp: (prop) => prop !== 'size',

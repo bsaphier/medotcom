@@ -2,7 +2,7 @@ import { UIEvent, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { useGlobalStore } from 'store/global';
 import { PageContent } from 'components/PageContent';
-import { Greeting } from './Greeting';
+import { Greeting } from 'views/Home/components/Greeting';
 
 const ViewContainer = styled('div')({
     height: '100dvh',

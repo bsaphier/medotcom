@@ -8,6 +8,7 @@ export default defineConfig({
         alias: {
             views: '/src/views',
             store: '/src/store',
+            sound: '/src/sound',
             components: '/src/components',
         },
     },

@@ -1,7 +1,7 @@
 {
     "editor.formatOnSave": true,
     "tabWidth": 4,
-    "printWidth": 100,
+    "printWidth": 80,
     "bracketSpacing": true,
     "singleQuote": true,
     "semi": true

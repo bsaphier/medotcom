@@ -25,6 +25,7 @@ const PhraseWrapper = styled('div')(() => ({
     textTransform: 'uppercase',
     fontFamily: 'Roboto',
     userSelect: 'none',
+    touchAction: 'none',
 }));
 
 const Phrase = styled(animated.span, {

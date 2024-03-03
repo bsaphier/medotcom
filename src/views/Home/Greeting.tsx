@@ -4,7 +4,14 @@ import { keyframes } from '@emotion/react';
 import { animated, config, useSpring } from '@react-spring/web';
 import { useGlobalStore } from 'store/global';
 import { PageContent } from 'components/PageContent';
-import { GreetingPhrase, PhraseData } from './GreetingPhrase';
+import { GreetingPhrase, PhraseData } from './components/GreetingPhrase';
+import { GreetingFooterButton } from './components/GreetingFooterButton';
+
+interface GreetingProps {
+    showButtonOne: boolean;
+    showButtonTwo: boolean;
+    onToggleSections: () => void;
+}
 
 const greetingMessage: PhraseData[] = [
     {
@@ -122,7 +129,6 @@ const GreetingTextWrapper = styled(animated.div, {
 })<{ active: boolean }>(({ active }) => ({
     position: 'fixed',
     left: '50%',
-    willChange: 'transform, top, filter',
     transform: 'translate(-50%, -100%)',
     cursor: 'default',
     ...(active
@@ -132,7 +138,22 @@ const GreetingTextWrapper = styled(animated.div, {
         : {}),
 }));
 
-export function Greeting() {
+const GreetingFooter = styled('div', {
+    shouldForwardProp: (prop) => prop !== 'active',
+})<{ active: boolean }>(({ active }) => ({
+    margin: 'auto auto -96px',
+    ...(active
+        ? {
+              animation: `${hueShiftAnimation} 13s infinite linear`,
+          }
+        : {}),
+    '& > :first-of-type': {
+        marginBottom: 48,
+    },
+}));
+
+export function Greeting(props: GreetingProps) {
+    const { showButtonOne, showButtonTwo, onToggleSections } = props;
     const displayGreeting = useGlobalStore((state) => state.displayGreeting);
 
     const [greetingTopSpring, greetingTopSpringApi] = useSpring(() => ({
@@ -160,6 +181,18 @@ export function Greeting() {
                     />
                 ))}
             </GreetingTextWrapper>
+            <GreetingFooter active={displayGreeting}>
+                <GreetingFooterButton
+                    hide={!showButtonOne}
+                    flip={!displayGreeting}
+                    onClick={onToggleSections}
+                />
+                <GreetingFooterButton
+                    hide={!showButtonTwo}
+                    flip={!displayGreeting}
+                    onClick={onToggleSections}
+                />
+            </GreetingFooter>
         </PageContent>
     );
 }

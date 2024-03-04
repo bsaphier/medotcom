@@ -11,4 +11,7 @@ export const theme: Theme = {
         },
         background: '#FEFEFE',
     },
+    typography: {
+        fontFamily: 'Poppins, sans-serif',
+    },
 };

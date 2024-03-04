@@ -12,5 +12,8 @@ declare module '@emotion/react' {
             };
             background: string;
         };
+        typography: {
+            fontFamily: sting;
+        };
     }
 }

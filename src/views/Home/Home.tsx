@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useShallow } from 'zustand/react/shallow';
 import { UIEvent, useEffect, useRef, useState } from 'react';
 import { useGlobalStore } from 'store/global';
 import { Greeting } from 'views/Home/Greeting';
@@ -10,16 +11,18 @@ const ViewContainer = styled('div')({
     overflow: 'auto',
 });
 
-const Page = styled('section')({
+const Page = styled('div')({
     position: 'relative',
     padding: '120px 0',
     width: '100%',
 });
 
 export function Home() {
-    const displayGreeting = useGlobalStore((state) => state.displayGreeting);
-    const setDisplayGreeting = useGlobalStore(
-        (state) => state.setDisplayGreeting,
+    const [displayGreeting, setDisplayGreeting] = useGlobalStore(
+        useShallow((state) => [
+            state.displayGreeting,
+            state.setDisplayGreeting,
+        ]),
     );
 
     const [showButtonOne, setShowButtonOne] = useState(true);

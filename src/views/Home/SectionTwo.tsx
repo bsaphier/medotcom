@@ -30,7 +30,7 @@ const ParallaxBackground = styled('div')({
 
 const layers = [layer1, layer2, layer3];
 
-export const SectionTwo = forwardRef<HTMLDivElement>((props, ref) => {
+export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
     const parallaxRef = useRef<HTMLDivElement>(null);
     const [parallaxCoords, setParallaxCoords] = useState({ x: 0, y: 0 });
 

@@ -9,6 +9,7 @@ export default defineConfig({
             views: '/src/views',
             store: '/src/store',
             sound: '/src/sound',
+            assets: '/src/assets',
             components: '/src/components',
         },
     },

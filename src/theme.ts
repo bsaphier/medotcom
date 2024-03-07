@@ -9,7 +9,10 @@ export const theme: Theme = {
         text: {
             primary: '#1A1A1A',
         },
-        background: '#FEFEFE',
+        background: {
+            default: '#FEFEFE',
+            darker: '#F6F6F6',
+        },
     },
     typography: {
         fontFamily: 'Poppins, sans-serif',

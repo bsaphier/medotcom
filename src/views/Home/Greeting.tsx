@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { animated, config, useSpring } from '@react-spring/web';
+
 import { useGlobalStore } from 'store/global';
 import { PageContent } from 'components/PageContent';
 import { GreetingPhrase, PhraseData } from './components/GreetingPhrase';

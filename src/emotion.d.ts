@@ -10,7 +10,10 @@ declare module '@emotion/react' {
             text: {
                 primary: string;
             };
-            background: string;
+            background: {
+                default: string;
+                darker: string;
+            };
         };
         typography: {
             fontFamily: sting;

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { CSSProperties, ReactNode } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
+
 import { bluesScale, playPluckSynth } from 'sound';
 
 export interface PhraseData {

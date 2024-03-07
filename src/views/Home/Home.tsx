@@ -1,20 +1,14 @@
 import styled from '@emotion/styled';
 import { useShallow } from 'zustand/react/shallow';
 import { UIEvent, useEffect, useRef, useState } from 'react';
+
 import { useGlobalStore } from 'store/global';
 import { Greeting } from 'views/Home/Greeting';
 import { SectionTwo } from 'views/Home/SectionTwo';
-import { PageContent } from 'components/PageContent';
 
 const ViewContainer = styled('div')({
     height: '100dvh',
     overflow: 'auto',
-});
-
-const Page = styled('div')({
-    position: 'relative',
-    padding: '120px 0',
-    width: '100%',
 });
 
 export function Home() {
@@ -69,9 +63,6 @@ export function Home() {
                 showButtonTwo={showButtonTwo}
             />
             <SectionTwo ref={sectionTwoRef} />
-            <PageContent>
-                <Page>Hi</Page>
-            </PageContent>
         </ViewContainer>
     );
 }

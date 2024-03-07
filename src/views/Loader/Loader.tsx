@@ -24,6 +24,7 @@ const EnterButton = styled('button')(({ theme }) => ({
     padding: 72,
     fontWeight: 800,
     cursor: 'pointer',
+    WebkitTapHighlightColor: 'transparent',
     animationDuration: '3000ms',
     animationTimingFunction: 'ease-in-out',
     animationIterationCount: 'infinite',

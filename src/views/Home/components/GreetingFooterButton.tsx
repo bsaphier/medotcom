@@ -17,6 +17,7 @@ const Button = styled(animated.div, {
     opacity: hide ? 0 : 0.618,
     transition: 'opacity .618s ease-in-out',
     userSelect: 'none',
+    WebkitTapHighlightColor: 'transparent',
 }));
 
 const InnerContainer = styled('div')(() => ({

@@ -15,6 +15,11 @@ import layer3 from 'assets/images/sot2.svg';
 import { useSoundStore } from 'store/sound';
 import { PageContent } from 'components/PageContent';
 import { ParallaxLayer } from './components/ParallaxLayer';
+import { PianoButton } from './components/PianoButton';
+
+const PageContentRelative = styled(PageContent)({
+    position: 'relative',
+});
 
 const ContentContainer = styled('div')({
     flex: 1,
@@ -114,7 +119,8 @@ export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
     }, [noteToPlay]);
 
     return (
-        <PageContent ref={ref}>
+        <PageContentRelative ref={ref}>
+            <PianoButton />
             <ContentContainer>
                 <Frame>
                     <ParallaxBackground
@@ -143,6 +149,6 @@ export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
                     </ParallaxBackground>
                 </Frame>
             </ContentContainer>
-        </PageContent>
+        </PageContentRelative>
     );
 });

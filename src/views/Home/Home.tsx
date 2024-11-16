@@ -2,8 +2,10 @@ import styled from '@emotion/styled';
 import { useShallow } from 'zustand/react/shallow';
 import { UIEvent, useEffect, useRef, useState } from 'react';
 
+import { Piano } from './components/Piano';
 import { useGlobalStore } from 'store/global';
 import { Greeting } from 'views/Home/Greeting';
+import { Draggable } from 'components/Draggable';
 import { SectionTwo } from 'views/Home/SectionTwo';
 
 const ViewContainer = styled('div')({
@@ -12,6 +14,8 @@ const ViewContainer = styled('div')({
 });
 
 export function Home() {
+    const showPiano = useGlobalStore((state) => state.showPiano);
+
     const [displayGreeting, setDisplayGreeting] = useGlobalStore(
         useShallow((state) => [
             state.displayGreeting,
@@ -63,6 +67,11 @@ export function Home() {
                 showButtonTwo={showButtonTwo}
             />
             <SectionTwo ref={sectionTwoRef} />
+            {showPiano && (
+                <Draggable>
+                    <Piano />
+                </Draggable>
+            )}
         </ViewContainer>
     );
 }

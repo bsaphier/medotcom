@@ -1,33 +1,11 @@
-type Frequency = number;
-type ScaleSteps = Frequency[];
-
 export type Scale = {
     step: number;
     noteInHz: number;
 }[];
 
-const A_IN_HZ: Frequency = 220;
-const BLUES_STEPS: ScaleSteps = [1, 6 / 5, 4 / 3, 45 / 32, 3 / 2, 9 / 5, 2];
+const A_IN_HZ = 220;
 
-/////////////////////////////////////////
-// [220, 264, 293.3333333333333, 309.375, 330, 396, 440]
-// ['A', 'C', 'D', 'D#', 'E', 'G', 'A']
-const KEY_DICT = {
-    A: 1,
-    Bb: 16 / 15,
-    B: 9 / 8,
-    C: 6 / 5,
-    Db: 5 / 4,
-    D: 4 / 3,
-    Eb: 64 / 45,
-    E: 3 / 2,
-    F: 8 / 5,
-    Gb: 5 / 3,
-    G: 16 / 9,
-    Ab: 15 / 8,
-};
-
-const TWELVE_TET: ScaleSteps = [
+const TWELVE_TET = [
     1,
     16 / 15,
     9 / 8,
@@ -42,7 +20,22 @@ const TWELVE_TET: ScaleSteps = [
     15 / 8,
 ];
 
-const ALT_STEPS: ScaleSteps = [
+export const KEY_DICT = {
+    A: TWELVE_TET[0],
+    Bb: TWELVE_TET[1],
+    B: TWELVE_TET[2],
+    C: TWELVE_TET[3],
+    Db: TWELVE_TET[4],
+    D: TWELVE_TET[5],
+    Eb: TWELVE_TET[6],
+    E: TWELVE_TET[7],
+    F: TWELVE_TET[8],
+    Gb: TWELVE_TET[9],
+    G: TWELVE_TET[10],
+    Ab: TWELVE_TET[11],
+};
+
+const BLUES_STEPS = [
     KEY_DICT.A,
     KEY_DICT.C,
     KEY_DICT.D,
@@ -52,30 +45,53 @@ const ALT_STEPS: ScaleSteps = [
     KEY_DICT.A * 2,
 ];
 
-const KEY_STEPS: ScaleSteps = [
-    6 / 5,
-    5 / 4,
-    4 / 3,
-    64 / 45,
-    3 / 2,
-    8 / 5,
-    5 / 3,
-    16 / 9,
-    15 / 8,
-    2,
-    32 / 15,
-    9 / 4,
-    12 / 5,
-];
-
-/////////////////////////////////////////
-
-function scaleFactory(scaleSteps: ScaleSteps, tonic: Frequency): Scale {
-    return scaleSteps.map((step, idx) => ({
+export function scaleFactory(
+    scale: number[],
+    tonic: number,
+    octave: number,
+): Scale {
+    return scale.map((step, idx) => ({
         step: idx + 1,
-        noteInHz: tonic * step,
+        noteInHz: tonic * 2 ** octave * step,
     }));
 }
 
-export const bluesScale = scaleFactory(ALT_STEPS, A_IN_HZ);
-export const keyboardScale = scaleFactory(KEY_STEPS, A_IN_HZ);
+export const bluesScale = scaleFactory(BLUES_STEPS, A_IN_HZ, 1);
+
+////////////////////////
+
+interface SemiToneMap {
+    [key: string]: number;
+}
+
+const A4_OCTAVE = 4;
+
+const SEMITONE_STEPS: SemiToneMap = {
+    C: -9,
+    'C#': -8,
+    Db: -8,
+    D: -7,
+    'D#': -6,
+    Eb: -6,
+    E: -5,
+    F: -4,
+    'F#': -3,
+    Gb: -3,
+    G: -2,
+    'G#': -1,
+    Ab: -1,
+    A: 0,
+    'A#': 1,
+    Bb: 1,
+    B: 2,
+    C2: 3,
+    'C#2': 4,
+    Db2: 4,
+    D2: 5,
+};
+
+export function getFrequencyFromNote(key: string, octave: number) {
+    const semitoneFromA4 = SEMITONE_STEPS[key] + (octave - A4_OCTAVE) * 12;
+    const frequency = 2 ** (semitoneFromA4 / 12) * 440;
+    return frequency;
+}

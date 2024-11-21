@@ -1,62 +1,168 @@
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useState } from 'react';
+import { PianoKey } from './PianoKey';
+import { useEffect, useState } from 'react';
 import { getFrequencyFromNote, playPluckSynth } from 'sound';
 
 interface PianoKeyMap {
     [key: string]: string;
 }
 
+interface KeyboardProps {
+    sizeRatio: number;
+}
+
 const MIN_OCTAVE = 2;
-const MAX_OCTAVE = 7;
+const MAX_OCTAVE = 6;
+const PIANO_WIDTH = 748;
 
-const Keyboard = styled('div')(({ theme }) => ({
-    display: 'flex',
-    gap: 4,
-    backgroundColor: theme.colors.background.darker,
-    padding: 12,
-    borderRadius: 16,
-    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.05)',
-    flexDirection: 'row',
-}));
-
-const Key = styled('div')({
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    fontSize: 11,
-    fontWeight: 500,
-    cursor: 'pointer',
-    borderRadius: 8,
-    transition: 'background-color 0.2s ease, transform 0.1s ease',
-});
-
-const WhiteKey = styled(Key)({
-    width: 48,
-    height: 140,
-    backgroundColor: '#fff',
-    border: '1px solid #ddd',
-    color: '#aaa',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.03)',
-    '&:hover': {
-        backgroundColor: '#f0f3f8',
+const pianoKeys = [
+    {
+        note: 'C',
+        pianoKey: 'C',
+        black: false,
+        octaveOffset: 0,
     },
-});
-
-const BlackKey = styled(Key)({
-    width: 36,
-    height: 90,
-    backgroundColor: '#333',
-    border: '1px solid #222',
-    color: '#eee',
-    marginLeft: -20,
-    marginRight: -20,
-    zIndex: 1,
-    '&:hover': {
-        backgroundColor: '#222',
+    {
+        note: 'C#',
+        pianoKey: 'C#',
+        black: true,
+        octaveOffset: 0,
     },
-});
+    {
+        note: 'D',
+        pianoKey: 'D',
+        black: false,
+        octaveOffset: 0,
+    },
+    {
+        note: 'D#',
+        pianoKey: 'D#',
+        black: true,
+        octaveOffset: 0,
+    },
+    {
+        note: 'E',
+        pianoKey: 'E',
+        black: false,
+        octaveOffset: 0,
+    },
+    {
+        note: 'F',
+        pianoKey: 'F',
+        black: false,
+        octaveOffset: 0,
+    },
+    {
+        note: 'F#',
+        pianoKey: 'F#',
+        black: true,
+        octaveOffset: 0,
+    },
+    {
+        note: 'G',
+        pianoKey: 'G',
+        black: false,
+        octaveOffset: 0,
+    },
+    {
+        note: 'G#',
+        pianoKey: 'G#',
+        black: true,
+        octaveOffset: 0,
+    },
+    {
+        note: 'A',
+        pianoKey: 'A',
+        black: false,
+        octaveOffset: 0,
+    },
+    {
+        note: 'A#',
+        pianoKey: 'A#',
+        black: true,
+        octaveOffset: 0,
+    },
+    {
+        note: 'B',
+        pianoKey: 'B',
+        black: false,
+        octaveOffset: 0,
+    },
+    {
+        note: 'C',
+        pianoKey: 'C2',
+        black: false,
+        octaveOffset: 1,
+    },
+    {
+        note: 'C#',
+        pianoKey: 'C#2',
+        black: true,
+        octaveOffset: 1,
+    },
+    {
+        note: 'D',
+        pianoKey: 'D2',
+        black: false,
+        octaveOffset: 1,
+    },
+    {
+        note: 'D#',
+        pianoKey: 'D#2',
+        black: true,
+        octaveOffset: 1,
+    },
+    {
+        note: 'E',
+        pianoKey: 'E2',
+        black: false,
+        octaveOffset: 1,
+    },
+    {
+        note: 'F',
+        pianoKey: 'F2',
+        black: false,
+        octaveOffset: 1,
+    },
+    {
+        note: 'F#',
+        pianoKey: 'F#2',
+        black: true,
+        octaveOffset: 1,
+    },
+    {
+        note: 'G',
+        pianoKey: 'G2',
+        black: false,
+        octaveOffset: 1,
+    },
+    {
+        note: 'G#',
+        pianoKey: 'G#2',
+        black: true,
+        octaveOffset: 1,
+    },
+    {
+        note: 'A',
+        pianoKey: 'A2',
+        black: false,
+        octaveOffset: 1,
+    },
+    {
+        note: 'A#',
+        pianoKey: 'A#2',
+        black: true,
+        octaveOffset: 1,
+    },
+    {
+        note: 'B',
+        pianoKey: 'B2',
+        black: false,
+        octaveOffset: 1,
+    },
+];
 
-const pianoKeys: PianoKeyMap = {
+const pianoKeyMap: PianoKeyMap = {
     a: 'C',
     w: 'C#',
     s: 'D',
@@ -74,37 +180,54 @@ const pianoKeys: PianoKeyMap = {
     l: 'D2',
 };
 
+const Keyboard = styled('div', {
+    shouldForwardProp: (prop) => prop !== 'sizeRatio',
+})<KeyboardProps>(({ theme, sizeRatio }) => ({
+    display: 'flex',
+    gap: 4 * sizeRatio,
+    backgroundColor: theme.colors.background.darker,
+    padding: 12 * sizeRatio,
+    borderRadius: 16,
+    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.05)',
+    flexDirection: 'row',
+    transformOrigin: 'top left',
+    transition: 'transform 0.2s ease', // Smooth scaling
+}));
+
 export function Piano() {
-    const [octave, setOctave] = useState(0);
+    const [activeNote, setActiveNote] = useState<string | null>(null);
+    const [octave, setOctave] = useState(2);
+    const [scale, setScale] = useState(1);
 
-    const handlePianoKeyDown = useCallback(
-        (key: string) => {
-            if (pianoKeys[key]) {
-                playPluckSynth({
-                    noteInHz: getFrequencyFromNote(pianoKeys[key], octave),
-                });
+    useEffect(() => {
+        const handleResize = () => {
+            const screenWidth = window.innerWidth;
+            if (screenWidth < PIANO_WIDTH) {
+                setScale(screenWidth / PIANO_WIDTH);
+            } else {
+                setScale(1);
             }
-        },
-        [octave],
-    );
-
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            event.preventDefault();
-            handlePianoKeyDown(event.key);
         };
 
-        window.addEventListener('keydown', handleKeyDown);
+        handleResize();
 
+        window.addEventListener('resize', handleResize);
         return () => {
-            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('resize', handleResize);
         };
-    }, [handlePianoKeyDown]);
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            event.preventDefault();
-            if (event.key === 'x') {
+            if (pianoKeyMap[event.key]) {
+                setActiveNote(pianoKeyMap[event.key]);
+                playPluckSynth({
+                    noteInHz: getFrequencyFromNote(
+                        pianoKeyMap[event.key],
+                        octave,
+                    ),
+                });
+            } else if (event.key === 'x') {
                 setOctave((current) => {
                     if (current + 1 <= MAX_OCTAVE) {
                         return current + 1;
@@ -121,38 +244,31 @@ export function Piano() {
             }
         };
 
+        const handleKeyUp = () => {
+            setActiveNote(null);
+        };
+
         window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
         };
-    }, []);
+    }, [octave]);
+
     return (
-        <Keyboard>
-            <WhiteKey /> {/* C4 */}
-            <BlackKey /> {/* C#4 */}
-            <WhiteKey /> {/* D4 */}
-            <BlackKey /> {/* D#4 */}
-            <WhiteKey /> {/* E4 */}
-            <WhiteKey /> {/* F4 */}
-            <BlackKey /> {/* F#4 */}
-            <WhiteKey /> {/* G4 */}
-            <BlackKey /> {/* G#4 */}
-            <WhiteKey /> {/* A4 */}
-            <BlackKey /> {/* A#4 */}
-            <WhiteKey /> {/* B4 */}
-            <WhiteKey /> {/* C5 */}
-            <BlackKey /> {/* C#5 */}
-            <WhiteKey /> {/* D5 */}
-            <BlackKey /> {/* D#5 */}
-            <WhiteKey /> {/* E5 */}
-            <WhiteKey /> {/* F5 */}
-            <BlackKey /> {/* F#5 */}
-            <WhiteKey /> {/* G5 */}
-            <BlackKey /> {/* G#5 */}
-            <WhiteKey /> {/* A5 */}
-            <BlackKey /> {/* A#5 */}
-            <WhiteKey /> {/* B5 */}
+        <Keyboard sizeRatio={scale}>
+            {pianoKeys.map((pianoKey) => (
+                <PianoKey
+                    key={pianoKey.pianoKey}
+                    note={pianoKey.note}
+                    black={pianoKey.black}
+                    active={activeNote === pianoKey.pianoKey}
+                    octave={octave + pianoKey.octaveOffset}
+                    sizeRatio={scale}
+                />
+            ))}
         </Keyboard>
     );
 }

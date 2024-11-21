@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useGlobalStore } from 'store/global';
+import { MouseEvent, useEffect } from 'react';
 
 interface ButtonProps {
     active?: boolean;
@@ -34,6 +35,9 @@ const Button = styled('button', {
         color: theme.colors.primary.main,
         content: '"♪"',
     },
+    '&:focus-visible': {
+        outline: `${theme.colors.primary.main} solid 2px`,
+    },
 }));
 
 export function PianoButton() {
@@ -41,9 +45,34 @@ export function PianoButton() {
         useShallow((state) => [state.showPiano, state.togglePiano]),
     );
 
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+        event.currentTarget.blur();
+        togglePiano();
+    };
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'q') {
+                togglePiano();
+            }
+        };
+
+        if (showPiano) {
+            window.addEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [showPiano, togglePiano]);
+
     return (
         <Container>
-            <Button active={showPiano} onClick={togglePiano} />
+            <Button
+                active={showPiano}
+                onClick={handleClick}
+                aria-haspopup="true"
+            />
         </Container>
     );
 }

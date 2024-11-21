@@ -23,7 +23,7 @@ const Container = styled('div')({
 export function Draggable(props: DraggableProps) {
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [offset, setOffset] = useState<Position>({ x: 0, y: 0 });
-    const [position, setPosition] = useState<Position>({ x: 50, y: 50 });
+    const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
     const [dimension, setDimension] = useState({ width: 0, height: 0 });
 
     const handleMouseDown = (event: ReactMouseEvent<HTMLElement>) => {

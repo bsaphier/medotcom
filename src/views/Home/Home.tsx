@@ -2,11 +2,10 @@ import styled from '@emotion/styled';
 import { useShallow } from 'zustand/react/shallow';
 import { UIEvent, useEffect, useRef, useState } from 'react';
 
-import { Piano } from './components/Piano';
 import { useGlobalStore } from 'store/global';
 import { Greeting } from 'views/Home/Greeting';
-import { Draggable } from 'components/Draggable';
 import { SectionTwo } from 'views/Home/SectionTwo';
+import { DraggablePiano } from './components/DraggablePiano';
 
 const ViewContainer = styled('div')({
     height: '100dvh',
@@ -67,11 +66,7 @@ export function Home() {
                 showButtonTwo={showButtonTwo}
             />
             <SectionTwo ref={sectionTwoRef} />
-            {showPiano && (
-                <Draggable>
-                    <Piano />
-                </Draggable>
-            )}
+            {showPiano && <DraggablePiano />}
         </ViewContainer>
     );
 }

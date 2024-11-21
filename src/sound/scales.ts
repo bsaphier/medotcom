@@ -3,63 +3,6 @@ export type Scale = {
     noteInHz: number;
 }[];
 
-const A_IN_HZ = 220;
-
-const TWELVE_TET = [
-    1,
-    16 / 15,
-    9 / 8,
-    6 / 5,
-    5 / 4,
-    4 / 3,
-    64 / 45,
-    3 / 2,
-    8 / 5,
-    5 / 3,
-    16 / 9,
-    15 / 8,
-];
-
-export const KEY_DICT = {
-    A: TWELVE_TET[0],
-    Bb: TWELVE_TET[1],
-    B: TWELVE_TET[2],
-    C: TWELVE_TET[3],
-    Db: TWELVE_TET[4],
-    D: TWELVE_TET[5],
-    Eb: TWELVE_TET[6],
-    E: TWELVE_TET[7],
-    F: TWELVE_TET[8],
-    Gb: TWELVE_TET[9],
-    G: TWELVE_TET[10],
-    Ab: TWELVE_TET[11],
-};
-
-const BLUES_STEPS = [
-    KEY_DICT.A,
-    KEY_DICT.C,
-    KEY_DICT.D,
-    KEY_DICT.Eb,
-    KEY_DICT.E,
-    KEY_DICT.G,
-    KEY_DICT.A * 2,
-];
-
-export function scaleFactory(
-    scale: number[],
-    tonic: number,
-    octave: number,
-): Scale {
-    return scale.map((step, idx) => ({
-        step: idx + 1,
-        noteInHz: tonic * 2 ** octave * step,
-    }));
-}
-
-export const bluesScale = scaleFactory(BLUES_STEPS, A_IN_HZ, 1);
-
-////////////////////////
-
 interface SemiToneMap {
     [key: string]: number;
 }
@@ -88,10 +31,34 @@ const SEMITONE_STEPS: SemiToneMap = {
     'C#2': 4,
     Db2: 4,
     D2: 5,
+    'D#2': 6,
+    Eb2: 6,
+    E2: 7,
+    F2: 8,
+    'F#2': 9,
+    Gb2: 9,
+    G2: 10,
+    'G#2': 11,
+    Ab2: 11,
+    A2: 12,
+    'A#2': 13,
+    Bb2: 13,
+    B2: 14,
 };
+
+const BLUES_SCALE = ['A', 'C2', 'D2', 'Eb2', 'E2', 'G2', 'A2'];
 
 export function getFrequencyFromNote(key: string, octave: number) {
     const semitoneFromA4 = SEMITONE_STEPS[key] + (octave - A4_OCTAVE) * 12;
     const frequency = 2 ** (semitoneFromA4 / 12) * 440;
     return frequency;
 }
+
+export function scaleFactory(notes: string[]): Scale {
+    return notes.map((note, idx) => ({
+        step: idx + 1,
+        noteInHz: getFrequencyFromNote(note, 4),
+    }));
+}
+
+export const bluesScale = scaleFactory(BLUES_SCALE);

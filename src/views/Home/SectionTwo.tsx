@@ -1,18 +1,18 @@
 import {
     useRef,
     useState,
-    useEffect,
+    // useEffect,
     MouseEvent,
     TouchEvent,
     forwardRef,
 } from 'react';
 import styled from '@emotion/styled';
 
-import { playPluckSynth } from 'sound';
+// import { playPluckSynth } from 'sound';
 import layer1 from 'assets/images/sot0.svg';
 import layer2 from 'assets/images/sot1.svg';
 import layer3 from 'assets/images/sot2.svg';
-import { useSoundStore } from 'store/sound';
+// import { useSoundStore } from 'store/sound';
 import { PageContent } from 'components/PageContent';
 import { ParallaxLayer } from './components/ParallaxLayer';
 import { PianoButton } from './components/PianoButton';
@@ -44,20 +44,20 @@ const ParallaxBackground = styled('div')({
 
 const layers = [layer1, layer2, layer3];
 
-function normalizeToIntRange(value: number, min: number, max: number) {
-    return Math.round(value * (max - min) + min);
-}
+// function normalizeToIntRange(value: number, min: number, max: number) {
+//     return Math.round(value * (max - min) + min);
+// }
 
 export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
-    const scale = useSoundStore((state) => state.scale);
+    // const scale = useSoundStore((state) => state.scale);
 
     const parallaxRef = useRef<HTMLDivElement>(null);
     const [parallaxCoords, setParallaxCoords] = useState({ x: 0, y: 0 });
-    const [noteToPlay, setNoteToPlay] = useState<number | null>(null);
+    // const [noteToPlay, setNoteToPlay] = useState<number | null>(null);
 
     const handleReset = () => {
         setParallaxCoords({ x: 0, y: 0 });
-        setNoteToPlay(null);
+        // setNoteToPlay(null);
     };
 
     const handleMouseMove = (
@@ -96,15 +96,15 @@ export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
         ) {
             // out of bounds
             setParallaxCoords({ x: 0, y: 0 });
-            setNoteToPlay(null);
+            // setNoteToPlay(null);
         } else {
-            const octave = normalizeToIntRange(normalizedMousePosition.y, 1, 3);
-            const scaleStep = normalizeToIntRange(
-                normalizedMousePosition.x,
-                0,
-                scale.length - 1,
-            );
-            setNoteToPlay(scale[scaleStep].noteInHz * octave);
+            // const octave = normalizeToIntRange(normalizedMousePosition.y, 1, 3);
+            // const scaleStep = normalizeToIntRange(
+            //     normalizedMousePosition.x,
+            //     0,
+            //     scale.length - 1,
+            // );
+            // setNoteToPlay(scale[scaleStep].noteInHz * octave);
             setParallaxCoords({
                 x: 100 * (normalizedMousePosition.y - 0.5),
                 y: -100 * (normalizedMousePosition.x - 0.5),
@@ -112,11 +112,11 @@ export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
         }
     };
 
-    useEffect(() => {
-        if (noteToPlay) {
-            playPluckSynth({ noteInHz: noteToPlay });
-        }
-    }, [noteToPlay]);
+    // useEffect(() => {
+    //     if (noteToPlay) {
+    //         playPluckSynth({ noteInHz: noteToPlay });
+    //     }
+    // }, [noteToPlay]);
 
     return (
         <PageContentRelative ref={ref}>

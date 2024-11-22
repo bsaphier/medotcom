@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useGlobalStore } from 'store/global';
-import { MouseEvent, useEffect } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 
 interface ButtonProps {
     active?: boolean;
@@ -41,6 +41,8 @@ const Button = styled('button', {
 }));
 
 export function PianoButton() {
+    const [visible, setVisible] = useState(true);
+
     const [showPiano, togglePiano] = useGlobalStore(
         useShallow((state) => [state.showPiano, state.togglePiano]),
     );
@@ -65,6 +67,27 @@ export function PianoButton() {
             window.removeEventListener('keydown', handleKeyDown);
         };
     }, [showPiano, togglePiano]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 600) {
+                setVisible(false);
+            } else {
+                setVisible(true);
+            }
+        };
+
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    if (!visible) {
+        return null;
+    }
 
     return (
         <Container>

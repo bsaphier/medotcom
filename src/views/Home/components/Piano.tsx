@@ -1,11 +1,15 @@
 import styled from '@emotion/styled';
 import { PianoKey } from './PianoKey';
-import { useEffect, useState } from 'react';
-import { getFrequencyFromNote, playPluckSynth } from 'sound';
+import { useEffect, useRef, useState } from 'react';
+import {
+    getFrequencyFromNote,
+    pluckSynthNoteOff,
+    pluckSynthNoteOn,
+} from 'sound';
 
-interface PianoKeyMap {
-    [key: string]: string;
-}
+type ActiveKeyMap = Record<string, boolean>;
+
+type PianoKeyMap = Record<string, string>;
 
 interface KeyboardProps {
     sizeRatio: number;
@@ -180,6 +184,17 @@ const pianoKeyMap: PianoKeyMap = {
     l: 'D2',
 };
 
+function hasMultipleTruthyValues(obj: ActiveKeyMap) {
+    let count = 0;
+
+    return Object.values(obj).some((value) => {
+        if (value) {
+            count++;
+        }
+        return count > 1;
+    });
+}
+
 const Keyboard = styled('div', {
     shouldForwardProp: (prop) => prop !== 'sizeRatio',
 })<KeyboardProps>(({ theme, sizeRatio }) => ({
@@ -195,6 +210,7 @@ const Keyboard = styled('div', {
 }));
 
 export function Piano() {
+    const activeKey = useRef<ActiveKeyMap>({});
     const [activeNote, setActiveNote] = useState<string | null>(null);
     const [octave, setOctave] = useState(2);
     const [scale, setScale] = useState(1);
@@ -218,10 +234,13 @@ export function Piano() {
     }, []);
 
     useEffect(() => {
+        const getKeyKey = (keyName: string) => String(keyName + octave);
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (pianoKeyMap[event.key]) {
+            const keyKey = getKeyKey(event.key);
+            if (pianoKeyMap[event.key] && !activeKey.current[keyKey]) {
                 setActiveNote(pianoKeyMap[event.key]);
-                playPluckSynth({
+                activeKey.current[keyKey] = true;
+                pluckSynthNoteOn({
                     noteInHz: getFrequencyFromNote(
                         pianoKeyMap[event.key],
                         octave,
@@ -244,8 +263,13 @@ export function Piano() {
             }
         };
 
-        const handleKeyUp = () => {
+        const handleKeyUp = (event: KeyboardEvent) => {
             setActiveNote(null);
+            const keyKey = getKeyKey(event.key);
+            if (!hasMultipleTruthyValues(activeKey.current)) {
+                pluckSynthNoteOff();
+            }
+            activeKey.current[keyKey] = false;
         };
 
         window.addEventListener('keydown', handleKeyDown);

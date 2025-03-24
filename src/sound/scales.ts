@@ -46,7 +46,7 @@ const SEMITONE_STEPS: SemiToneMap = {
     B2: 14,
 };
 
-const BLUES_SCALE = ['A', 'C2', 'D2', 'Eb2', 'E2', 'G2', 'A2'];
+export const BLUES_SCALE = ['A', 'C2', 'D2', 'Eb2', 'E2', 'G2', 'A2'];
 
 export function getFrequencyFromNote(key: string, octave: number) {
     const semitoneFromA4 = SEMITONE_STEPS[key] + (octave - A4_OCTAVE) * 12;

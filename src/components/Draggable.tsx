@@ -1,5 +1,6 @@
 import {
     MouseEvent as ReactMouseEvent,
+    TouchEvent as ReactTouchEvent,
     ReactNode,
     useCallback,
     useEffect,
@@ -26,14 +27,29 @@ export function Draggable(props: DraggableProps) {
     const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
     const [dimension, setDimension] = useState({ width: 0, height: 0 });
 
-    const handleMouseDown = (event: ReactMouseEvent<HTMLElement>) => {
-        setIsDragging(true);
+    const handleStart = (
+        event: ReactMouseEvent<HTMLElement> | ReactTouchEvent<HTMLElement>,
+    ) => {
         event.preventDefault();
+        setIsDragging(true);
 
         const target = event.currentTarget;
+
+        let clientX,
+            clientY = 0;
+
+        if ((event as ReactTouchEvent).touches) {
+            const touch = (event as ReactTouchEvent).touches[0];
+            clientX = touch.clientX;
+            clientY = touch.clientY;
+        } else {
+            clientX = (event as ReactMouseEvent).clientX;
+            clientY = (event as ReactMouseEvent).clientY;
+        }
+
         setOffset({
-            x: event.clientX - target.getBoundingClientRect().left,
-            y: event.clientY - target.getBoundingClientRect().top,
+            x: clientX - target.getBoundingClientRect().left,
+            y: clientY - target.getBoundingClientRect().top,
         });
         setDimension({
             width: target.offsetWidth,
@@ -41,15 +57,23 @@ export function Draggable(props: DraggableProps) {
         });
     };
 
-    const handleMouseUp = useCallback(() => {
-        setIsDragging(false);
-    }, []);
-
-    const handleMouseMove = useCallback(
-        (event: MouseEvent) => {
+    const handleMove = useCallback(
+        (event: MouseEvent | TouchEvent) => {
             if (isDragging) {
-                let x = event.clientX - offset.x;
-                let y = event.clientY - offset.y;
+                let clientX,
+                    clientY = 0;
+
+                if ((event as TouchEvent).touches) {
+                    const touch = (event as TouchEvent).touches[0];
+                    clientX = touch.clientX;
+                    clientY = touch.clientY;
+                } else {
+                    clientX = (event as MouseEvent).clientX;
+                    clientY = (event as MouseEvent).clientY;
+                }
+
+                let x = clientX - offset.x;
+                let y = clientY - offset.y;
 
                 // Ensure the element stays within the viewport
                 const rightBoundary = window.innerWidth - dimension.width;
@@ -66,19 +90,28 @@ export function Draggable(props: DraggableProps) {
         [isDragging, offset, dimension],
     );
 
+    const handleMouseUpOrTouchEnd = useCallback(() => {
+        setIsDragging(false);
+    }, []);
+
     useEffect(() => {
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener('mousemove', handleMove);
+        document.addEventListener('mouseup', handleMouseUpOrTouchEnd);
+        document.addEventListener('touchmove', handleMove);
+        document.addEventListener('touchend', handleMouseUpOrTouchEnd);
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener('mousemove', handleMove);
+            document.removeEventListener('mouseup', handleMouseUpOrTouchEnd);
+            document.removeEventListener('touchmove', handleMove);
+            document.removeEventListener('touchend', handleMouseUpOrTouchEnd);
         };
-    }, [handleMouseMove, handleMouseUp]);
+    }, [handleMove, handleMouseUpOrTouchEnd]);
 
     return (
         <Container
             style={{ left: `${position.x}px`, top: `${position.y}px` }}
-            onMouseDown={handleMouseDown}
+            onMouseDown={handleStart}
+            onTouchStart={handleStart}
         >
             {props.children}
         </Container>

@@ -1,21 +1,18 @@
-import {
-    useRef,
-    useState,
-    // useEffect,
-    MouseEvent,
-    TouchEvent,
-    forwardRef,
-} from 'react';
+import { useRef, useState, MouseEvent, TouchEvent, forwardRef } from 'react';
 import styled from '@emotion/styled';
 
-// import { playPluckSynth } from 'sound';
 import layer1 from 'assets/images/sot0.svg';
 import layer2 from 'assets/images/sot1.svg';
 import layer3 from 'assets/images/sot2.svg';
-// import { useSoundStore } from 'store/sound';
 import { PageContent } from 'components/PageContent';
-import { ParallaxLayer } from './components/ParallaxLayer';
 import { PianoButton } from './components/PianoButton';
+import { ParallaxLayer } from './components/ParallaxLayer';
+import {
+    BLUES_SCALE,
+    getFrequencyFromNote,
+    pluckSynthNoteOff,
+    pluckSynthNoteOn,
+} from 'sound';
 
 const PageContentRelative = styled(PageContent)({
     position: 'relative',
@@ -44,25 +41,25 @@ const ParallaxBackground = styled('div')({
 
 const layers = [layer1, layer2, layer3];
 
-// function normalizeToIntRange(value: number, min: number, max: number) {
-//     return Math.round(value * (max - min) + min);
-// }
+function normalizeToRange(value: number, min: number, max: number) {
+    return value * (max - min) + min;
+}
 
 export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
-    // const scale = useSoundStore((state) => state.scale);
-
+    const timer = useRef<number>();
     const parallaxRef = useRef<HTMLDivElement>(null);
     const [parallaxCoords, setParallaxCoords] = useState({ x: 0, y: 0 });
-    // const [noteToPlay, setNoteToPlay] = useState<number | null>(null);
 
     const handleReset = () => {
         setParallaxCoords({ x: 0, y: 0 });
-        // setNoteToPlay(null);
+        pluckSynthNoteOff();
     };
 
     const handleMouseMove = (
         event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>,
     ) => {
+        clearTimeout(timer.current);
+
         let x,
             y = 0;
 
@@ -96,27 +93,40 @@ export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
         ) {
             // out of bounds
             setParallaxCoords({ x: 0, y: 0 });
-            // setNoteToPlay(null);
         } else {
-            // const octave = normalizeToIntRange(normalizedMousePosition.y, 1, 3);
-            // const scaleStep = normalizeToIntRange(
-            //     normalizedMousePosition.x,
-            //     0,
-            //     scale.length - 1,
-            // );
-            // setNoteToPlay(scale[scaleStep].noteInHz * octave);
             setParallaxCoords({
                 x: 100 * (normalizedMousePosition.y - 0.5),
                 y: -100 * (normalizedMousePosition.x - 0.5),
             });
+            playSound(normalizedMousePosition.y);
         }
     };
 
-    // useEffect(() => {
-    //     if (noteToPlay) {
-    //         playPluckSynth({ noteInHz: noteToPlay });
-    //     }
-    // }, [noteToPlay]);
+    const playSound = (percent: number, step?: number) => {
+        if (!step) {
+            step = 0;
+        }
+
+        if (step >= BLUES_SCALE.length) {
+            return;
+        }
+
+        clearTimeout(timer.current);
+
+        const noteToPlay = BLUES_SCALE[step];
+        const noteInHz = normalizeToRange(
+            percent,
+            getFrequencyFromNote(noteToPlay, 3),
+            getFrequencyFromNote(noteToPlay, 1),
+        );
+        pluckSynthNoteOn({ noteInHz });
+        timer.current = setTimeout(() => {
+            pluckSynthNoteOff();
+            setTimeout(() => {
+                setParallaxCoords({ x: 0, y: 0 });
+            }, 50);
+        }, 100);
+    };
 
     return (
         <PageContentRelative ref={ref}>

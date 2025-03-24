@@ -20,6 +20,7 @@ const Key = styled('button')(({ theme }) => ({
     fontSize: 11,
     fontWeight: 500,
     cursor: 'pointer',
+    padding: 0,
     transition: 'background-color 0.2s ease-out, transform 0.1s ease',
     '&:focus-visible': {
         outline: `${theme.colors.primary.main} solid 2px`,

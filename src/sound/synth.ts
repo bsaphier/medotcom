@@ -1,10 +1,13 @@
-interface Note {
+export type NoteOn = {
     note: number;
     attack: { value: number; time: number };
-    decay: { value: number; time: number };
-    sustain: { time: number };
+    decay: { time: number };
+    sustain: { value: number };
+};
+
+export type NoteOff = {
     release: { time: number };
-}
+};
 
 export class Synth {
     #timer?: ReturnType<typeof setTimeout>;
@@ -17,11 +20,11 @@ export class Synth {
     oscillator2: OscillatorNode;
     filter: BiquadFilterNode;
 
-    constructor() {
+    constructor(context: AudioContext) {
         this.#timer;
         this.#initialized = false;
 
-        this.context = new window.AudioContext();
+        this.context = context;
         this.gainNode = this.context.createGain();
         this.levelNode = this.context.createGain();
         this.masterGain = this.context.createGain();
@@ -49,7 +52,7 @@ export class Synth {
         this.levelNode.connect(this.filter);
         this.filter.connect(this.gainNode);
 
-        this.gainNode.gain.value = 0;
+        this.gainNode.gain.value = 0.62;
         this.levelNode.gain.value = 0.025;
 
         this.oscillator1.start();
@@ -59,7 +62,7 @@ export class Synth {
         return this;
     }
 
-    play(note: Note) {
+    noteOn(note: NoteOn) {
         clearTimeout(this.#timer);
 
         if (!this.#initialized) {
@@ -69,13 +72,10 @@ export class Synth {
             this.context.resume();
         }
 
-        const { note: noteInHz, attack, decay, sustain, release } = note;
+        const { note: noteInHz, attack, decay, sustain } = note;
         const currentTime = this.context.currentTime;
         const decayStartTime = currentTime + attack.time;
-        const sustainStartTime = decayStartTime + decay.time + sustain.time;
-        const totalTimeInMs = Math.round(
-            (attack.time + decay.time + sustain.time + release.time) * 1000,
-        );
+        const sustainStartTime = decayStartTime + decay.time;
 
         this.filter.frequency.setTargetAtTime(
             noteInHz * 4,
@@ -85,7 +85,7 @@ export class Synth {
         this.filter.frequency.setTargetAtTime(
             1760,
             sustainStartTime,
-            release.time,
+            decay.time,
         );
 
         this.gainNode.gain.setTargetAtTime(0, currentTime, 0.01);
@@ -108,16 +108,26 @@ export class Synth {
         );
         /** Decay */
         this.gainNode.gain.setTargetAtTime(
-            decay.value,
+            sustain.value,
             decayStartTime,
             decay.time,
         );
-        /** Release */
-        this.gainNode.gain.setTargetAtTime(0, sustainStartTime, release.time);
+    }
 
-        this.#timer = setTimeout(() => {
-            this.context.suspend();
-        }, totalTimeInMs * 3);
+    noteOff(note: NoteOff) {
+        const { release } = note;
+        const startTime = this.context.currentTime + 0.0125;
+
+        // if notes are pressed to fast and a new note begins before
+        // the start time, the new note turns off/
+        this.gainNode.gain.setTargetAtTime(0, startTime, release.time);
+
+        this.#timer = setTimeout(
+            () => {
+                this.context.suspend();
+            },
+            (startTime + release.time) * 10000,
+        );
     }
 
     kill() {

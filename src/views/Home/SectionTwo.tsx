@@ -1,18 +1,19 @@
 import { useRef, useState, MouseEvent, TouchEvent, forwardRef } from 'react';
 import styled from '@emotion/styled';
 
-import layer1 from 'assets/images/sot0.svg';
-import layer2 from 'assets/images/sot1.svg';
-import layer3 from 'assets/images/sot2.svg';
-import { PageContent } from 'components/PageContent';
-import { PianoButton } from './components/PianoButton';
-import { ParallaxLayer } from './components/ParallaxLayer';
 import {
     BLUES_SCALE,
     getFrequencyFromNote,
     pluckSynthNoteOff,
     pluckSynthNoteOn,
 } from 'sound';
+import layer1 from 'assets/images/sot0.svg';
+import layer2 from 'assets/images/sot1.svg';
+import layer3 from 'assets/images/sot2.svg';
+import { PageContent } from 'components/PageContent';
+import { PianoButton } from './components/PianoButton';
+import { ResumeButton } from './components/ResumeButton';
+import { ParallaxLayer } from './components/ParallaxLayer';
 
 const PageContentRelative = styled(PageContent)({
     position: 'relative',
@@ -131,6 +132,7 @@ export const SectionTwo = forwardRef<HTMLDivElement>((_props, ref) => {
     return (
         <PageContentRelative ref={ref}>
             <PianoButton />
+            <ResumeButton />
             <ContentContainer>
                 <Frame>
                     <ParallaxBackground

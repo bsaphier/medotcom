@@ -20,17 +20,15 @@ const Button = styled('button', {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: 'none',
-    borderRadius: 8,
-    backgroundColor: theme.colors.background.darker,
+    borderRadius: 4,
+    border: '1px solid #d4d4d4',
+    backgroundColor: active ? '#f0f0f0' : theme.colors.background.darker,
     width: 32,
     height: 32,
-    boxShadow: active
-        ? 'inset 3px 3px 5px #b8b8b8, inset -3px -3px 5px #ffffff'
-        : '3px 3px 5px #b8b8b8, -3px -3px 5px #ffffff',
+    boxShadow: active ? '0px 0px 8px #efefef' : 'none',
     fontSize: 16,
     cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
+    transition: 'all 50ms ease-in-out',
     '&:before': {
         color: theme.colors.primary.main,
         content: '"♪"',

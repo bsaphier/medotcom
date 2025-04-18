@@ -28,8 +28,8 @@ const Frame = styled('div')(({ theme }) => ({
     height: '100%',
     width: '100%',
     borderRadius: 8,
+    border: '1px solid #d4d4d4',
     backgroundColor: theme.colors.background.darker,
-    boxShadow: '#222 0px 1px 8px -3px inset',
 }));
 
 const ParallaxBackground = styled('div')({

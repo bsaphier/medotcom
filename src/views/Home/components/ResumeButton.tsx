@@ -6,7 +6,7 @@ const publicResume =
 const Container = styled('div')(() => ({
     position: 'absolute',
     bottom: 48,
-    left: 48,
+    right: 48,
 }));
 
 const Button = styled('a')(({ theme }) => ({
@@ -24,7 +24,6 @@ const Button = styled('a')(({ theme }) => ({
     letterSpacing: '-0.0125rem',
     textDecoration: 'none',
     cursor: 'pointer',
-    // color: theme.colors.primary.main,
     color: theme.colors.background.default,
     '&:focus-visible': {
         outline: `${theme.colors.primary.main} solid 2px`,
